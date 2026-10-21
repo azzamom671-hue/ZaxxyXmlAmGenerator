@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALIGHT MAGIC Pro — Cloud Provisioning Console</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-base: #060911;
+      --surface-glass: rgba(15, 23, 42, 0.75);
+      --surface-glass-active: rgba(30, 41, 59, 0.85);
+      --border-glass: rgba(255, 255, 255, 0.12);
+      --border-accent: rgba(99, 102, 241, 0.5);
+
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --cyan: #06b6d4;
+      --emerald: #10b981;
+      --rose: #f43f5e;
+      --amber: #f59e0b;
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-pill: 9999px;
+
+      --font-code: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Dynamic Glowing Spheres */
+    .glow-sphere {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.35;
+      animation: floatGlow 12s infinite alternate ease-in-out;
+    }
+
+    .glow-1 {
+      top: -100px;
+      left: 10%;
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, #6366f1, #3b82f6);
+    }
+
+    .glow-2 {
+      bottom: -150px;
+      right: 10%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #06b6d4, #10b981);
+      animation-delay: -6s;
+    }
+
+    @keyframes floatGlow {
+      0% { transform: translateY(0px) scale(1); }
+      100% { transform: translateY(40px) scale(1.15); }
+    }
+
+    .main-wrapper {
+      width: 100%;
+      max-width: 580px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header Nav & Quick Metrics */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding: 0 4px;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(10px);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .status-pulse {
+      width: 8px;
+      height: 8px;
+      background: var(--emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--emerald);
+      animation: pulseAnim 2s infinite;
+    }
+
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.25); }
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-glass);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* Main Console Card */
+    .console-card {
+      background: var(--surface-glass);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    /* Brand Title */
+    .brand-hero {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .brand-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #6366f1, #06b6d4);
+      display: grid;
+      place-items: center;
+      color: #ffffff;
+      font-size: 24px;
+      box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5);
+    }
+
+    .brand-details h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tag-pro {
+      font-size: 11px;
+      background: linear-gradient(90deg, #6366f1, #06b6d4);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .brand-details p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    /* Interactive Stepper Bar */
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .step-track {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .step-line {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-pill);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .step-track.active .step-line {
+      background: linear-gradient(90deg, #6366f1, #06b6d4);
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
+    }
+
+    .step-track.done .step-line {
+      background: var(--emerald);
+    }
+
+    .step-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-dim);
+      white-space: nowrap;
+      transition: color 0.2s ease;
+    }
+
+    .step-track.active .step-label {
+      color: #fff;
+    }
+
+    .step-track.done .step-label {
+      color: var(--emerald);
+    }
+
+    /* Views Panels */
+    .panel-view {
+      display: none;
+      animation: viewSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .panel-view.active {
+      display: block;
+    }
+
+    @keyframes viewSlide {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .view-heading {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .view-sub {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    /* Forms & Inputs */
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      color: var(--text-dim);
+      font-size: 15px;
+      pointer-events: none;
+    }
+
+    .custom-input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px 14px 46px;
+      font-size: 14px;
+      color: #fff;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .custom-input:focus {
+      border-color: #6366f1;
+      background: rgba(15, 23, 42, 0.95);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+    }
+
+    .custom-input.has-paste-btn {
+      padding-right: 90px;
+    }
+
+    .paste-action-btn {
+      position: absolute;
+      right: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-glass);
+      color: var(--text-muted);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .paste-action-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    /* FITUR BARU: Accordion Authorization & Mandatory ACC Toggle */
+    .acc-container {
+      background: rgba(30, 41, 59, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 22px;
+      transition: all 0.2s ease;
+    }
+
+    .acc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .acc-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .acc-content {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      display: none;
+    }
+
+    .acc-content.open {
+      display: block;
+    }
+
+    .checkbox-tile {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-bottom: 22px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .checkbox-tile:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .custom-checkbox {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .checkbox-text {
+      font-size: 12.5px;
+      line-height: 1.4;
+      color: var(--text-muted);
+    }
+
+    .checkbox-text strong {
+      color: #f8fafc;
+    }
+
+    /* Modern Push Buttons */
+    .btn {
+      width: 100%;
+      padding: 14px 24px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-glow-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+    }
+
+    .btn-glow-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+    }
+
+    .btn-glow-emerald {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+    }
+
+    .btn-glow-emerald:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+    }
+
+    .btn-ghost {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid var(--border-glass);
+      color: var(--text-muted);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      background: rgba(51, 65, 85, 0.7);
+      color: #fff;
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Verification Box */
+    .profile-banner {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.08));
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .banner-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #6366f1;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+    }
+
+    /* Success Results Summary Cards */
+    .success-icon-wrap {
+      width: 72px;
+      height: 72px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: var(--emerald);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 32px;
+      margin: 0 auto 18px;
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+    }
+
+    .metric-title {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .metric-val {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Global Modern Toast */
+    .toast-box {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(16px);
+      padding: 12px 20px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .toast-box.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .toast-box.toast-error {
+      border-color: rgba(244, 63, 94, 0.5);
+    }
+    .toast-box.toast-error i { color: var(--rose); }
+    .toast-box i { color: var(--emerald); font-size: 15px; }
+
+    /* Loading backdrop */
+    .loading-modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(6, 9, 17, 0.85);
+      backdrop-filter: blur(10px);
+      border-radius: var(--radius-lg);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 100;
+    }
+
+    .loading-modal.active { display: flex; }
+
+    .cyber-spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #6366f1;
+      border-right-color: #06b6d4;
+      border-radius: 50%;
+      animation: spinRing 0.7s linear infinite;
+    }
+
+    @keyframes spinRing {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Glow -->
+  <div class="glow-sphere glow-1"></div>
+  <div class="glow-sphere glow-2"></div>
+
+  <div class="main-wrapper">
+    
+    <!-- Top Utility Bar -->
+    <header class="top-header">
+      <div class="badge-pill">
+        <span class="status-pulse"></span>
+        <span>Secure Gateway Active</span>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button class="icon-btn" id="btnAudioToggle" title="Toggle audio SFX">
+          <i class="fa-solid fa-volume-high" id="audioIcon"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Card -->
+    <main class="console-card">
+
+      <!-- Brand Header -->
+      <div class="brand-hero">
+        <div class="brand-logo">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+        </div>
+        <div class="brand-details">
+          <h1>Alight Magic <span class="tag-pro">Pro 3.0</span></h1>
+          <p>Automated subscription provisioning & license engine</p>
+        </div>
+      </div>
+
+      <!-- Stepper Nav -->
+      <nav class="stepper">
+        <div class="step-track active" id="track1">
+          <div class="step-line"></div>
+          <span class="step-label">1. Email & ACC</span>
+        </div>
+        <div class="step-track" id="track2">
+          <div class="step-line"></div>
+          <span class="step-label">2. Auth Link</span>
+        </div>
+        <div class="step-track" id="track3">
+          <div class="step-line"></div>
+          <span class="step-label">3. Activation</span>
+        </div>
+        <div class="step-track" id="track4">
+          <div class="step-line"></div>
+          <span class="step-label">4. Complete</span>
+        </div>
+      </nav>
+
+      <!-- STEP 1: Email + Mandatory Authorization (ACC) -->
+      <section class="panel-view active" id="viewStep1">
+        <h2 class="view-heading">Masukkan Akun Alight Motion</h2>
+        <p class="view-sub">Kirim tautan Magic Link autentikasi resmi langsung ke kotak masuk email Anda.</p>
+
+        <div class="input-group">
+          <label class="input-label" for="inputEmail">ALAMAT EMAIL TARGET</label>
+          <div class="input-wrapper">
+            <i class="fa-regular fa-envelope input-icon"></i>
+            <input 
+              type="email" 
+              id="inputEmail" 
+              class="custom-input" 
+              placeholder="nama@domain.com"
+              autocomplete="email"
+              spellcheck="false"
+            >
+          </div>
+        </div>
+
+        <!-- FITUR BARU: Accordion Info Lisensi -->
+        <div class="acc-container">
+          <div class="acc-header" id="btnToggleAccordion">
+            <span class="acc-title">
+              <i class="fa-solid fa-file-shield text-primary"></i>
+              Ketentuan Layanan & Otomatisasi Lisensi
+            </span>
+            <i class="fa-solid fa-chevron-down" id="accIcon" style="font-size: 12px; color: var(--text-dim);"></i>
+          </div>
+          <div class="acc-content" id="accBody">
+            Sistem akan menghubungkan token identitas akun Anda ke pipeline aktivasi server. Pastikan email terdaftar aktif di aplikasi Alight Motion, tidak menggunakan email sementara (disposable mail), dan Anda menyetujui sinkronisasi token sesi secara aman.
+          </div>
+        </div>
+
+        <!-- FITUR BARU: Wajib Centang / ACC Sebelum Lanjut -->
+        <label class="checkbox-tile" for="checkConsent">
+          <input type="checkbox" id="checkConsent" class="custom-checkbox">
+          <span class="checkbox-text">
+            <strong>Saya setuju dan memberikan ACC (Authorization Consent)</strong> untuk melakukan verifikasi identitas dan mengizinkan injeksi lisensi pada akun ini.
+          </span>
+        </label>
+
+        <button class="btn btn-glow-primary" id="btnSend" disabled>
+          <i class="fa-solid fa-paper-plane"></i>
+          <span>Kirim Magic Link</span>
+        </button>
+
+        <div id="resendCountdown" style="text-align: center; font-size: 12px; color: var(--text-dim); margin-top: 12px; display: none;">
+          Kirim ulang tersedia dalam <span id="resendTimer" style="color: #fff; font-weight: 700;">60</span> detik
+        </div>
+      </section>
+
+      <!-- STEP 2: Paste Verification URL -->
+      <section class="panel-view" id="viewStep2">
+        <h2 class="view-heading">Tempel Tautan Verifikasi</h2>
+        <p class="view-sub">Buka inbox email Anda, salin URL dari tombol/link verifikasi, lalu masukkan ke kolom di bawah.</p>
+
+        <div class="input-group">
+          <label class="input-label" for="inputRawLink">URL / LINK VERIFIKASI</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-link input-icon"></i>
+            <input 
+              type="url" 
+              id="inputRawLink" 
+              class="custom-input has-paste-btn" 
+              placeholder="https://alightcreative.page.link/..."
+              spellcheck="false"
+            >
+            <button type="button" class="paste-action-btn" id="btnPaste">
+              <i class="fa-regular fa-clipboard"></i>
+              <span>Paste</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-ghost" id="btnBack1" style="flex: 0.35;">
+            Kembali
+          </button>
+          <button class="btn btn-glow-primary" id="btnVerify" style="flex: 0.65;">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Verifikasi Akun</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 3: Verified / Trigger Premium -->
+      <section class="panel-view" id="viewStep3">
+        <h2 class="view-heading">Identitas Terkonfirmasi</h2>
+        <p class="view-sub">Token otorisasi Anda valid dan siap diproses ke server lisensi.</p>
+
+        <div class="profile-banner">
+          <div class="banner-avatar">
+            <i class="fa-solid fa-user-check"></i>
+          </div>
+          <div style="flex: 1; overflow: hidden;">
+            <div style="font-size: 11px; font-weight: 700; color: #818cf8; text-transform: uppercase;">Akun Terverifikasi</div>
+            <div id="labelVerifiedEmail" style="font-weight: 700; font-size: 14.5px; color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">user@example.com</div>
+          </div>
+          <i class="fa-solid fa-certificate" style="color: var(--emerald); font-size: 20px;"></i>
+        </div>
+
+        <button class="btn btn-glow-emerald" id="btnActivate">
+          <i class="fa-solid fa-crown"></i>
+          <span>Aktifkan Lisensi Premium Sekarang</span>
+        </button>
+      </section>
+
+      <!-- STEP 4: Success Result -->
+      <section class="panel-view" id="viewStep4">
+        <div style="text-align: center; padding-top: 8px;">
+          <div class="success-icon-wrap">
+            <i class="fa-solid fa-check"></i>
+          </div>
+          <h2 class="view-heading">Aktivasi Selesai!</h2>
+          <p class="view-sub">Lisensi paket Pro/Premium telah berhasil dipasang ke akun Anda.</p>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-title">Status Lisensi</div>
+            <div class="metric-val" style="color: var(--emerald);"><i class="fa-solid fa-circle-check"></i> Aktif (Pro)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-title">Export Engine</div>
+            <div class="metric-val">4K 60FPS / No Watermark</div>
+          </div>
+          <div class="metric-card" style="grid-column: span 2;">
+            <div class="metric-title">Akun Email</div>
+            <div class="metric-val" id="labelSuccessEmail">-</div>
+          </div>
+        </div>
+
+        <button class="btn btn-ghost" id="btnRestart">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>Provisi Akun Baru</span>
+        </button>
+      </section>
+
+      <!-- Loading State Modal -->
+      <div class="loading-modal" id="loadingModal">
+        <div class="cyber-spinner"></div>
+        <span id="loadingText" style="font-size: 13.5px; font-weight: 600; color: var(--text-muted);">Menghubungkan ke Gateway...</span>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Toast Notifier -->
+  <div class="toast-box" id="toast">
+    <i class="fa-solid fa-circle-check" id="toastIcon"></i>
+    <span id="toastMsg">Operasi berhasil dijalankan</span>
+  </div>
+
+  <script>
+    // Config Gateway
+    const API_BASE = 'https://api.axzyedev.biz.id';
+    const API_KEY  = 'axdproject-axzye-and-zenu-qisk25bz4d42';
+
+    // State Application
+    const state = {
+      email: '',
+      idToken: '',
+      step: 1,
+      audioMuted: false,
+      resendTimer: 0,
+      resendInterval: null
+    };
+
+    // Elements DOM
+    const $ = (s) => document.querySelector(s);
+    const views = [$('#viewStep1'), $('#viewStep2'), $('#viewStep3'), $('#viewStep4')];
+    const tracks = [$('#track1'), $('#track2'), $('#track3'), $('#track4')];
+
+    const inputEmail = $('#inputEmail');
+    const inputRawLink = $('#inputRawLink');
+    const checkConsent = $('#checkConsent');
+    const btnSend = $('#btnSend');
+    const btnPaste = $('#btnPaste');
+    const btnBack1 = $('#btnBack1');
+    const btnVerify = $('#btnVerify');
+    const btnActivate = $('#btnActivate');
+    const btnRestart = $('#btnRestart');
+
+    const btnToggleAccordion = $('#btnToggleAccordion');
+    const accBody = $('#accBody');
+    const accIcon = $('#accIcon');
+
+    const resendCountdown = $('#resendCountdown');
+    const resendTimer = $('#resendTimer');
+
+    const loadingModal = $('#loadingModal');
+    const loadingText = $('#loadingText');
+    const toast = $('#toast');
+    const toastMsg = $('#toastMsg');
+    const toastIcon = $('#toastIcon');
+
+    const labelVerifiedEmail = $('#labelVerifiedEmail');
+    const labelSuccessEmail = $('#labelSuccessEmail');
+    const btnAudioToggle = $('#btnAudioToggle');
+    const audioIcon = $('#audioIcon');
+
+    // Accordion Toggle
+    btnToggleAccordion.addEventListener('click', () => {
+      accBody.classList.toggle('open');
+      if (accBody.classList.contains('open')) {
+        accIcon.className = 'fa-solid fa-chevron-up';
+      } else {
+        accIcon.className = 'fa-solid fa-chevron-down';
+      }
+    });
+
+    // Checkbox Consent Validation
+    checkConsent.addEventListener('change', () => {
+      validateStep1();
+    });
+
+    inputEmail.addEventListener('input', () => {
+      validateStep1();
+    });
+
+    function validateStep1() {
+      const email = inputEmail.value.trim();
+      const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      // Tombol aktif jika email format valid DAN user sudah ACC (centang consent)
+      btnSend.disabled = !(valid && checkConsent.checked && state.resendTimer <= 0);
+    }
+
+    // Audio SFX Engine
+    let audioCtx = null;
+    function getAudioCtx() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playTone(freq, dur = 0.05, type = 'sine') {
+      if (state.audioMuted) return;
+      try {
+        const ctx = getAudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.04, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + dur);
+      } catch (e) {}
+    }
+
+    btnAudioToggle.addEventListener('click', () => {
+      state.audioMuted = !state.audioMuted;
+      if (state.audioMuted) {
+        audioIcon.className = 'fa-solid fa-volume-xmark';
+        showToast('Suara dinonaktifkan', false);
+      } else {
+        audioIcon.className = 'fa-solid fa-volume-high';
+        playTone(600, 0.04);
+        showToast('Suara diaktifkan', false);
+      }
+    });
+
+    function showLoading(msg) {
+      loadingText.textContent = msg;
+      loadingModal.classList.add('active');
+    }
+    function hideLoading() {
+      loadingModal.classList.remove('active');
+    }
+
+    let toastTimer;
+    function showToast(msg, isError = false) {
+      clearTimeout(toastTimer);
+      toastMsg.textContent = msg;
+      if (isError) {
+        toast.classList.add('toast-error');
+        toastIcon.className = 'fa-solid fa-circle-exclamation';
+      } else {
+        toast.classList.remove('toast-error');
+        toastIcon.className = 'fa-solid fa-circle-check';
+      }
+      toast.classList.add('show');
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    function setStep(num) {
+      state.step = num;
+      views.forEach((v, i) => v.classList.toggle('active', i === num - 1));
+      tracks.forEach((t, i) => {
+        t.classList.remove('active', 'done');
+        if (i < num - 1) t.classList.add('done');
+        else if (i === num - 1) t.classList.add('active');
+      });
+    }
+
+    // API Caller
+    async function requestGateway(endpoint, payload) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 20000);
+      try {
+        const resp = await fetch(`${API_BASE}${endpoint}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': API_KEY
+          },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+        clearTimeout(timer);
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) {
+          throw new Error(data.message || data.error || `Server error (${resp.status})`);
+        }
+        return data;
+      } catch (err) {
+        clearTimeout(timer);
+        if (err.name === 'AbortError') throw new Error('Request timeout. Periksa internet Anda.');
+        throw err;
+      }
+    }
+
+    // Step 1: Send Magic Link
+    btnSend.addEventListener('click', async () => {
+      playTone(550, 0.05);
+      const email = inputEmail.value.trim();
+
+      if (!checkConsent.checked) {
+        playTone(250, 0.1, 'triangle');
+        showToast('Anda wajib menyetujui (ACC) klausul otorisasi terlebih dahulu!', true);
+        return;
+      }
+
+      state.email = email;
+      showLoading('Mengirim magic link autentikasi...');
+
+      try {
+        await requestGateway('/am-prem/send-magiclink', { email });
+        hideLoading();
+        playTone(700, 0.08);
+        showToast('Magic Link berhasil dikirim ke email!');
+        
+        // Cooldown resend
+        state.resendTimer = 60;
+        btnSend.disabled = true;
+        resendCountdown.style.display = 'block';
+        resendTimer.textContent = state.resendTimer;
+        state.resendInterval = setInterval(() => {
+          state.resendTimer--;
+          resendTimer.textContent = state.resendTimer;
+          if (state.resendTimer <= 0) {
+            clearInterval(state.resendInterval);
+            resendCountdown.style.display = 'none';
+            validateStep1();
+          }
+        }, 1000);
+
+        setStep(2);
+      } catch (err) {
+        hideLoading();
+        playTone(250, 0.1, 'triangle');
+        showToast(err.message || 'Gagal mengirim magic link', true);
+      }
+    });
+
+    // Step 2: Paste & Verify
+    btnPaste.addEventListener('click', async () => {
+      playTone(550, 0.04);
+      try {
+        if (navigator.clipboard && navigator.clipboard.readText) {
+          const txt = await navigator.clipboard.readText();
+          if (txt) {
+            inputRawLink.value = txt.trim();
+            showToast('Tautan ditempel dari clipboard.');
+            return;
+          }
+        }
+        showToast('Tempel URL secara manual pada input.', false);
+      } catch {
+        showToast('Izin akses clipboard ditolak.', true);
+      }
+    });
+
+    btnBack1.addEventListener('click', () => {
+      playTone(450, 0.04);
+      setStep(1);
+    });
+
+    btnVerify.addEventListener('click', async () => {
+      playTone(550, 0.04);
+      const rawLink = inputRawLink.value.trim();
+      if (!rawLink || !rawLink.startsWith('http')) {
+        playTone(250, 0.1, 'triangle');
+        showToast('Masukkan link valid (diawali http/https)', true);
+        return;
+      }
+
+      showLoading('Memvalidasi tanda tangan token...');
+      try {
+        const res = await requestGateway('/am-prem/verify-account', {
+          email: state.email,
+          rawLink
+        });
+
+        const token = res.idToken || res.token || res.id_token;
+        if (!token) throw new Error('Token otentikasi tidak ditemukan dalam respon.');
+
+        state.idToken = token;
+        hideLoading();
+        playTone(750, 0.08);
+        labelVerifiedEmail.textContent = state.email;
+        showToast('Akun berhasil diverifikasi!');
+        setStep(3);
+      } catch (err) {
+        hideLoading();
+        playTone(250, 0.1, 'triangle');
+        showToast(err.message || 'Link tidak valid atau telah kadaluarsa', true);
+      }
+    });
+
+    // Step 3: Activate License
+    btnActivate.addEventListener('click', async () => {
+      playTone(600, 0.05);
+      showLoading('Memasang lisensi Pro ke akun...');
+
+      try {
+        await requestGateway('/am-prem/apply-premium', {
+          idToken: state.idToken
+        });
+
+        hideLoading();
+        playTone(850, 0.12);
+        labelSuccessEmail.textContent = state.email;
+        showToast('Lisensi Berhasil Dipasang!');
+        setStep(4);
+      } catch (err) {
+        hideLoading();
+        playTone(250, 0.1, 'triangle');
+        showToast(err.message || 'Gagal mengaktifkan lisensi', true);
+      }
+    });
+
+    // Step 4: Restart
+    btnRestart.addEventListener('click', () => {
+      playTone(450, 0.04);
+      state.email = '';
+      state.idToken = '';
+      inputEmail.value = '';
+      inputRawLink.value = '';
+      checkConsent.checked = false;
+      validateStep1();
+      setStep(1);
+    });
+
+    document.addEventListener('pointerdown', () => getAudioCtx(), { once: true });
+  </script>
+</body>
+</html>
